@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Alive Feet Initial</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div id="terminal">
+            <div id="session-title">
+                <span class="title-bracket">[</span>
+                <span class="title-main">ALIVE FEET</span>
+                <span class="title-sub">INITIAL</span>
+                <span class="title-bracket">]</span>
+            </div>
+            <div id="screen">
+                <!-- Absolute overlays inside screen -->
+                <div id="offer-counter">
+                    Offer: <span id="counter-text">1/6</span>
+                </div>
+                <div id="stats-panel">
+                    <div id="stats-title">STATISTICS</div>
+                    <div id="stats-list"></div>
+                </div>
+                <div id="inventory-panel">
+                    <div id="inventory-title">INVENTORY</div>
+                    <div id="inventory-list"></div>
+                </div>
+                <div id="easter-egg"></div>
+
+                <!-- Main content -->
+                <div id="output"></div>
+                <div id="buttons">
+                    <button id="accept">Accept</button>
+                    <button id="reroll">Decline</button>
+                </div>
+            </div>
+        </div>
+        <div id="summary-overlay"></div>
+        <script src="script.js"></script>
+    </body>
+</html>

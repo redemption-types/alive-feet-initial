@@ -1,0 +1,367 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #0a0a0a;
+    font-family: "Courier New", monospace;
+    color: #b19cd9;
+    overflow: hidden;
+    /* centre everything on screen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+/* ── Terminal shell ───────────────────────────────────────── */
+#terminal {
+    width: 800px;
+    height: 600px;
+    background: #1a1a1a;
+    border: 10px solid #4a148c;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+    animation: flicker 3s infinite alternate;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative; /* positioning context for overlays */
+}
+
+/* ── Title bar ────────────────────────────────────────────── */
+#session-title {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 9px 0 8px;
+    background: #111;
+    border-bottom: 2px solid #4a148c;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.title-bracket {
+    color: #8a2be2;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 0 8px #8a2be2;
+}
+
+.title-main {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.35em;
+    color: #fff;
+    text-shadow:
+        0 0 6px #fff,
+        0 0 14px #b19cd9,
+        0 0 28px #8a2be2;
+    text-transform: uppercase;
+}
+
+.title-sub {
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.5em;
+    color: #ffd700;
+    text-shadow: 0 0 8px #ffd700;
+    text-transform: uppercase;
+    align-self: flex-end;
+    padding-bottom: 2px;
+}
+
+/* ── Screen area ──────────────────────────────────────────── */
+#screen {
+    flex: 1;
+    min-height: 0;
+    background: #0d0d0d;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative; /* anchor for absolute panels */
+}
+
+#screen::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(138, 43, 226, 0.03) 0px,
+        rgba(138, 43, 226, 0.03) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+}
+
+/* ── Output / buttons ─────────────────────────────────────── */
+#output {
+    height: 80%;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+#buttons {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 20px;
+    /* Keep buttons away from the right-side inventory panel */
+    padding-right: 200px;
+    padding-left: 20px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+button {
+    background: #2a2a2a;
+    color: #b19cd9;
+    border: 2px solid #8a2be2;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+}
+
+button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(138, 43, 226, 0.5),
+        transparent
+    );
+    transition: left 0.6s;
+}
+
+button:hover {
+    background: #8a2be2;
+    color: #0a0a0a;
+    box-shadow:
+        0 0 20px rgba(138, 43, 226, 0.8),
+        inset 0 0 15px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:active {
+    transform: translateY(0px) scale(0.98);
+    box-shadow:
+        0 0 10px rgba(138, 43, 226, 0.8),
+        inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: 0 0 5px rgba(138, 43, 226, 0.2);
+}
+
+/* ── Overlay panels (positioned inside #screen) ───────────── */
+#offer-counter {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    color: #b19cd9;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #8a2be2;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 5px;
+    z-index: 10;
+}
+
+#stats-panel {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: #b19cd9;
+    font-size: 12px;
+    border: 2px solid #8a2be2;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    min-width: 120px;
+    max-width: 180px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 10;
+    display: none;
+}
+
+#stats-title {
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 7px;
+    text-align: center;
+    border-bottom: 1px solid #8a2be2;
+    padding-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+}
+
+#stats-list {
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+#inventory-panel {
+    position: absolute;
+    bottom: 75px; /* sits above the button row */
+    right: 16px;
+    color: #b19cd9;
+    font-size: 12px;
+    border: 2px solid #8a2be2;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 5px;
+    min-width: 120px;
+    max-width: 180px;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+}
+
+#inventory-title {
+    font-weight: bold;
+    color: #00ff88;
+    margin-bottom: 7px;
+    text-align: center;
+    border-bottom: 1px solid #8a2be2;
+    padding-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+}
+
+#inventory-list {
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* ── Easter egg ───────────────────────────────────────────── */
+#easter-egg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 1000;
+}
+
+#easter-egg img {
+    width: 300px;
+    height: 300px;
+    animation: fadeInOffer 0.5s ease-in;
+}
+
+/* ── Summary overlay ──────────────────────────────────────── */
+#summary-overlay {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: #0d0d0d;
+    border: 2px solid #4a148c;
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(138, 43, 226, 0.7);
+    padding: 40px 50px;
+    box-sizing: border-box;
+    font-family: "Courier New", monospace;
+    color: #b19cd9;
+    text-align: center;
+    z-index: 9999;
+    animation: fadeIn 0.8s ease-in;
+}
+
+/* ── Animations ───────────────────────────────────────────── */
+@keyframes flicker {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.98;
+    }
+}
+
+/* Used by #summary-overlay (keeps the translate in place) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Used by offer content elements inside #output */
+@keyframes fadeInOffer {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeToBlack {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes shake {
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(-10px, -10px) rotate(2deg);
+    }
+    50% {
+        transform: translate(10px, 10px) rotate(-2deg);
+    }
+    75% {
+        transform: translate(-10px, 10px) rotate(-2deg);
+    }
+}
+
+#terminal.fading {
+    animation: fadeToBlack 1.5s ease-in forwards;
+    pointer-events: none;
+}
