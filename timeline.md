@@ -1,4 +1,4 @@
-# Alive Feet Initial — Development Timeline
+# alive feet initial — Development Timeline
 
 ---
 
