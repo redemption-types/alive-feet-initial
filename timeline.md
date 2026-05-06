@@ -27,7 +27,7 @@
 
 ---
 
-## Current Session (Claude Sonnet 4.6)
+## Current Session (Claude Sonnet 4.6) powered by Zed.dev IDE
 
 ### Fix 1 — Broken rendering (nothing displayed)
 - Root cause: stray `}` at end of `updateInventory()` caused a JS parse error
