@@ -58,7 +58,6 @@ body {
         0 0 6px #fff,
         0 0 14px #b19cd9,
         0 0 28px #8a2be2;
-    text-transform: uppercase;
 }
 
 .title-sub {
@@ -67,7 +66,6 @@ body {
     letter-spacing: 0.5em;
     color: #ffd700;
     text-shadow: 0 0 8px #ffd700;
-    text-transform: uppercase;
     align-self: flex-end;
     padding-bottom: 2px;
 }

@@ -1,70 +1,74 @@
 // Item database: Dead Hand Collection
+// Weights match real CS2 drop rates:
+//   Mil-Spec ~79.92%, Restricted ~15.98%, Classified ~3.20%, Covert ~0.64%, Gloves ~0.26%
+// Prices are ranges — rolled fresh each session for variance.
 const items = [
-  // Skins (17)
+  // ── Mil-Spec (avg ~$0.60, range $0.15–$2.50) ──────────────
   {
     name: "AK-47 | Slate (Mil-Spec)",
     rarity: "Mil-Spec",
-    price: 0.15,
-    weight: 58,
+    priceMin: 0.15,
+    priceMax: 1.8,
+    weight: 400,
     image: "blue - lmg_processed.png",
   },
   {
     name: "M4A4 | Magnesium (Mil-Spec)",
     rarity: "Mil-Spec",
-    price: 0.15,
-    weight: 58,
+    priceMin: 0.2,
+    priceMax: 2.5,
+    weight: 400,
     image: "blue - rifle_processed.png",
   },
-  // { name: "AWP | Acheron (Mil-Spec)", rarity: "Mil-Spec", price: 0.15, weight: 58 },
-  // { name: "USP-S | The Traitor (Mil-Spec)", rarity: "Mil-Spec", price: 0.15, weight: 58 },
-  // { name: "Glock-18 | Moonrise (Mil-Spec)", rarity: "Mil-Spec", price: 0.15, weight: 58 },
-  // { name: "AK-47 | Ice Coaled (Restricted)", rarity: "Restricted", price: 1, weight: 12 },
+  // ── Restricted (avg ~$4, range $1.50–$12) ─────────────────
   {
     name: "M4A1-S | Emphorosaur-S (Restricted)",
     rarity: "Restricted",
-    price: 1,
-    weight: 12,
+    priceMin: 2.5,
+    priceMax: 12.0,
+    weight: 55,
     image: "purple - rifle_processed.png",
   },
-  // { name: "AWP | Worm God (Restricted)", rarity: "Restricted", price: 1, weight: 12 },
   {
     name: "USP-S | Cortex (Restricted)",
     rarity: "Restricted",
-    price: 1,
-    weight: 12,
+    priceMin: 1.5,
+    priceMax: 9.0,
+    weight: 55,
     image: "purple - deagle_processed.png",
   },
   {
     name: "Glock-18 | Weasel (Restricted)",
     rarity: "Restricted",
-    price: 1,
-    weight: 12,
+    priceMin: 1.8,
+    priceMax: 8.0,
+    weight: 50,
     image: "purple - deagle_processed.png",
   },
-  // { name: "AK-47 | Uncharted (Classified)", rarity: "Classified", price: 10, weight: 2 },
-  // { name: "M4A1-S | Chantico's Fire (Classified)", rarity: "Classified", price: 10, weight: 2 },
-  // { name: "AWP | Silk Tiger (Classified)", rarity: "Classified", price: 10, weight: 2 },
+  // ── Classified (avg ~$22, range $8–$55) ───────────────────
   {
     name: "USP-S | Flashback (Classified)",
     rarity: "Classified",
-    price: 10,
-    weight: 2,
+    priceMin: 8.0,
+    priceMax: 55.0,
+    weight: 16,
     image: "pink - pistol_processed.png",
   },
-  // { name: "Glock-18 | Vogue (Classified)", rarity: "Classified", price: 10, weight: 2 },
-  // { name: "AK-47 | Fire Serpent (Covert)", rarity: "Covert", price: 100, weight: 1 },
+  // ── Covert (avg ~$120, range $60–$250) ────────────────────
   {
     name: "AWP | Dragon Lore (Covert)",
     rarity: "Covert",
-    price: 100,
-    weight: 1,
+    priceMin: 60.0,
+    priceMax: 250.0,
+    weight: 3,
     image: "red - sniper_processed.png",
   },
-  // Gloves (22) - very low weight
+  // ── Gloves (avg ~$850, range $400–$1800) ──────────────────
   {
     name: "Hand Wraps | Slaughter",
     rarity: "Gloves",
-    price: 1000,
+    priceMin: 400,
+    priceMax: 1800,
     weight: 1,
     image: "gold - gloves_processed.bmp",
   },
@@ -120,14 +124,20 @@ const items = [
 // Compute total weight
 let totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
 
-// Weighted random picker
+// Roll a random price within an item's range, rounded to 2dp
+function rollPrice(item) {
+  const raw = item.priceMin + Math.random() * (item.priceMax - item.priceMin);
+  return Math.round(raw * 100) / 100;
+}
+
+// Weighted random picker — returns a copy with a freshly rolled price
 function getRandomItem() {
   let random = Math.random() * totalWeight;
   let cumulative = 0;
   for (let item of items) {
     cumulative += item.weight;
     if (random < cumulative) {
-      return item;
+      return { ...item, price: rollPrice(item) };
     }
   }
 }
@@ -261,8 +271,23 @@ function showSummary(rejected) {
   }
 
   if (rejected) {
-    html += `<div style="font-size:11px; color:#444; margin-top:16px; letter-spacing:0.1em;">67 67 67 67.</div>`;
+    html += `<div style="font-size:11px; color:#444; margin-top:16px; letter-spacing:0.1em;">All offers rejected.</div>`;
   }
+
+  // Drop rate disclosure
+  html += `
+    <div style="margin-top:24px; border-top:1px solid #1e1e2e; padding-top:16px;">
+      <div style="font-size:10px; color:#555; text-transform:uppercase; letter-spacing:0.18em; margin-bottom:10px;">— drop rate disclosure —</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px 24px; font-size:10px; max-width:320px; margin:0 auto; text-align:left;">
+        <span style="color:#0066ff;">Mil-Spec</span>     <span style="color:#444;">79.92%</span>
+        <span style="color:#9933ff;">Restricted</span>   <span style="color:#444;">15.98%</span>
+        <span style="color:#ff1493;">Classified</span>   <span style="color:#444;"> 3.20%</span>
+        <span style="color:#ff0000;">Covert</span>       <span style="color:#444;"> 0.64%</span>
+        <span style="color:#ffd700;">Gloves</span>       <span style="color:#444;"> 0.26%</span>
+      </div>
+      <div style="font-size:9px; color:#333; margin-top:10px; letter-spacing:0.08em;">prices roll within tier ranges each session</div>
+    </div>
+  `;
 
   // Fade terminal to black, then reveal overlay
   terminal.classList.add("fading");
@@ -321,12 +346,17 @@ document.addEventListener("keydown", (e) => {
 
       // Guarantee next offer is gold rarity
       if (currentOfferIndex < 5) {
-        offers[currentOfferIndex + 1] = {
+        const eggItem = {
           name: "Hand Wraps | Destiny",
           rarity: "Gloves",
-          price: 1000,
+          priceMin: 400,
+          priceMax: 1800,
           weight: 1,
           image: "gold - gloves_processed.bmp",
+        };
+        offers[currentOfferIndex + 1] = {
+          ...eggItem,
+          price: rollPrice(eggItem),
         };
       }
 

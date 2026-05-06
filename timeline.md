@@ -84,6 +84,24 @@
 - Buttons shifted left with `padding-right: 200px` to keep them clear of the right-side inventory panel
 - Buttons now centred within the available left portion of the screen
 
+### Fix 14 — Price ranges and weight rebalance
+- Static `price` values replaced with `priceMin` / `priceMax` ranges per item
+- A `rollPrice()` function rolls a fresh price within the range each time an item is selected, giving each session unique values
+- Weights rebalanced to match real CS2 drop rate distribution (from screenshot evidence):
+  - Mil-Spec: weight 800 total (~79.9% chance)
+  - Restricted: weight 160 total (~15.9% chance)
+  - Classified: weight 16 (~3.2% chance)
+  - Covert: weight 3 (~0.6% chance)
+  - Gloves: weight 1 (~0.26% chance)
+- Price ranges calibrated so Gloves average ~$850 and each tier scales ~5× downward:
+  - Gloves: $400–$1,800
+  - Covert: $60–$250
+  - Classified: $8–$55
+  - Restricted: $1.50–$12
+  - Mil-Spec: $0.15–$2.50
+- Easter egg guaranteed Gloves item also gets a rolled price from the same range
+- `getRandomItem()` now returns a spread copy `{ ...item, price }` so the base item definition is never mutated between sessions
+
 ### Fix 13 — Declining the final offer did nothing
 - Root cause: two `rerollBtn.disabled = true` lines fired as soon as `currentOfferIndex` reached 5 — one in the Decline handler, one in the Accept handler
 - The button was being disabled before the user could click it on offer 6, making the `showSummary(true)` branch unreachable
